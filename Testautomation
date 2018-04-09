@@ -1,0 +1,86 @@
+package Clases;
+
+import java.awt.AWTException;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+
+import javax.imageio.ImageIO;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+
+public class TestAutomatizacion {
+
+        public static void main(String args[]) throws AWTException, IOException
+        {
+                //Cambiar el navegador sobre el cual se va a ejecutar
+                System.setProperty("webdriver.chrome.driver", "C:\\Users\\hp\\Downloads\\chromedriver.exe");
+
+                //se crea un driver para ejecutar sobre Google Chrome
+                WebDriver driver = new ChromeDriver();
+
+                //Abre el navegador, con la página indicada
+                driver.get("http://planet.choucairtesting.com/bin/login/Main/WebHome?origurl=/");
+
+                //Maximiza la ventana del navegador
+                driver.manage().window().maximize();
+
+                //Variable para tomar la fecha y hora del sistema
+                Date fecha = new Date();
+
+                //se busca el textbox del usuario
+                WebElement objetoGUI = driver.findElement(By.name("username"));
+                objetoGUI.sendKeys("apulido");
+                ScreenShoot("ScreenUser" + fecha.getDay() + fecha.getMonth()+fecha.getYear()+fecha.getHours()+fecha.getMinutes()+fecha.getSeconds());
+
+                //se busca el textbox del password
+                objetoGUI = driver.findElement(By.name("password"));
+                objetoGUI.sendKeys("Adrian.1215");
+                ScreenShoot("ScreenPass" + fecha.getDay() + fecha.getMonth()+fecha.getYear()+fecha.getHours()+fecha.getMinutes()+fecha.getSeconds());
+
+                //se busca el botón
+                objetoGUI = driver.findElement(By.className("foswikiSubmit"));
+                objetoGUI.submit();
+
+                //una espera de 5 segundos
+                try {
+                        Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                }
+
+                //se toma pantallazo de la ultima pantalla del navegador
+                ScreenShoot("ScreenFinal" + fecha.getDay() + fecha.getMonth()+fecha.getYear()+fecha.getHours()+fecha.getMinutes()+fecha.getSeconds());
+
+                //cierra el navegador
+                driver.close();
+        }
+
+        //crea la imagen (Pantallazo)
+        private static void ScreenShoot(String name) throws AWTException, IOException
+        {
+                //Dimensión de la pantalla ancho x alto
+                Dimension tamanioPantalla = Toolkit.getDefaultToolkit().getScreenSize();
+
+                //area a la cual se le tomará el screenshoot, tiene la dimensión de la pantalla
+                Rectangle image = new Rectangle(tamanioPantalla);
+
+                //para tomar el pantallazo
+                Robot robot = new Robot();
+
+                //Crea la imagen en cache para ser guardada
+                BufferedImage captura = robot.createScreenCapture(image);
+
+                //almacena la imagen en la ruta que se le indica con el formto y nombre especificado
+                ImageIO.write(captura, "png", new File("C:\\images\\" + name + ".png"));
+        }
+}
